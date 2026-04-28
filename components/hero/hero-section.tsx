@@ -9,7 +9,7 @@ export function HeroSection() {
   return (
     <section
       aria-label="Portada principal"
-      className="relative w-full overflow-hidden px-4 py-20 md:py-32"
+      className="relative w-full overflow-hidden px-4 pt-28 pb-20 md:pt-36 md:pb-32"
     >
       <HeroBackground />
 

@@ -13,7 +13,7 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = (): void => setScrolled(window.scrollY > 8);
+    const handleScroll = (): void => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -23,14 +23,19 @@ export function Navbar() {
 
   return (
     <>
-      <header
-        className={cn(
-          'sticky top-0 z-50 w-full bg-white/95 backdrop-blur-sm',
-          'transition-shadow duration-300',
-          scrolled && 'shadow-card',
-        )}
-      >
-        <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between gap-4">
+      <header className="fixed top-4 left-0 right-0 z-50 px-4 pointer-events-none">
+        <div
+          className={cn(
+            'mx-auto max-w-6xl pointer-events-auto',
+            'h-14 px-4 flex items-center justify-between gap-4',
+            'bg-white/90 backdrop-blur-md',
+            'border border-neutral-200 rounded-2xl',
+            'transition-all duration-300',
+            scrolled
+              ? 'shadow-[0_8px_32px_-4px_rgb(0_0_0/0.12),0_2px_8px_-2px_rgb(0_0_0/0.08)]'
+              : 'shadow-[0_2px_8px_-2px_rgb(0_0_0/0.06)]',
+          )}
+        >
           <NavbarLogo />
           <NavbarMenu />
           <NavbarCtas />
