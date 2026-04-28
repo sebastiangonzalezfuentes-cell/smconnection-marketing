@@ -5,7 +5,7 @@ export function NavbarLogo() {
   return (
     <Link
       href="/"
-      aria-label="smconnection — ir al inicio"
+      aria-label="SmartConnection — ir al inicio"
       className="shrink-0"
     >
       <Logo size="md" />

@@ -19,10 +19,10 @@ export function Logo({ className, size = 'md' }: LogoProps) {
         sizeClasses[size],
         className,
       )}
-      aria-label="smconnection"
+      aria-label="SmartConnection"
     >
-      <span className="text-neutral-900">sm</span>
-      <span className="text-blue-600">connection</span>
+      <span className="text-neutral-900">Smart</span>
+      <span className="text-blue-600">Connection</span>
     </span>
   );
 }

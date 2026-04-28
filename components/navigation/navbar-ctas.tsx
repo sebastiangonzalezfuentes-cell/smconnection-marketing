@@ -4,23 +4,14 @@ import { SITE_CONFIG } from '@/lib/constants/site';
 
 export function NavbarCtas() {
   return (
-    <div className="hidden md:flex items-center gap-3">
-      <Button variant="ghost" size="sm" asChild>
-        <Link
-          href={SITE_CONFIG.whatsappUrl('Hola, me gustaría conocer más sobre smconnection.')}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          WhatsApp
-        </Link>
-      </Button>
+    <div className="flex items-center">
       <Button variant="primary" size="sm" asChild>
         <Link
           href={SITE_CONFIG.calendarUrl}
           target="_blank"
           rel="noopener noreferrer"
         >
-          Agenda gratis
+          Haz crecer tu negocio →
         </Link>
       </Button>
     </div>
