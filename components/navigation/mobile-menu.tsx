@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import { X } from 'lucide-react';
+import { X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SITE_CONFIG } from '@/lib/constants/site';
 import { NAV_CONFIG } from '@/lib/data/navigation';
+import { cn } from '@/lib/utils/cn';
 
 interface MobileMenuProps {
   open: boolean;
@@ -16,6 +17,7 @@ interface MobileMenuProps {
 export function MobileMenu({ open, onClose }: MobileMenuProps) {
   const prefersReduced = useReducedMotion();
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -23,6 +25,7 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
+      setOpenDropdown(null);
     }
     return () => { document.body.style.overflow = ''; };
   }, [open]);
@@ -34,6 +37,10 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
   }, [open, onClose]);
+
+  const toggleDropdown = (label: string): void => {
+    setOpenDropdown((prev) => (prev === label ? null : label));
+  };
 
   return (
     <AnimatePresence>
@@ -64,7 +71,7 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
           >
             {/* Header del drawer */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
-              <span className="font-semibold text-neutral-900 text-sm">smconnection</span>
+              <span className="font-semibold text-neutral-900 text-sm">SmartConnection</span>
               <button
                 type="button"
                 onClick={onClose}
@@ -79,32 +86,62 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
             <nav className="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-1">
               {NAV_CONFIG.map((item, i) => {
                 if (item.dropdown) {
+                  const isOpen = openDropdown === item.label;
                   return (
-                    <div key={item.label} className="mb-2">
-                      <p className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-neutral-400">
+                    <div key={item.label}>
+                      {/* Trigger acordeón */}
+                      <button
+                        type="button"
+                        aria-expanded={isOpen}
+                        onClick={() => toggleDropdown(item.label)}
+                        className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-neutral-700 hover:bg-neutral-50 font-medium transition-colors text-sm"
+                      >
                         {item.label}
-                      </p>
-                      {item.dropdown.map((sub) => (
-                        <Link
-                          key={sub.href + sub.label}
-                          href={sub.href}
-                          ref={i === 0 ? firstLinkRef : undefined}
-                          onClick={onClose}
-                          className="flex items-start gap-3 px-3 py-3 rounded-xl text-neutral-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group"
-                        >
-                          <span className="flex flex-col">
-                            <span className="text-sm font-medium leading-tight">{sub.label}</span>
-                            {sub.description && (
-                              <span className="text-xs text-neutral-400 group-hover:text-blue-500 mt-0.5 leading-snug">
-                                {sub.description}
-                              </span>
-                            )}
-                          </span>
-                        </Link>
-                      ))}
+                        <ChevronDown
+                          size={16}
+                          className={cn(
+                            'text-neutral-400 transition-transform duration-200',
+                            isOpen && 'rotate-180',
+                          )}
+                          aria-hidden="true"
+                        />
+                      </button>
+
+                      {/* Contenido del dropdown con animación */}
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div
+                            initial={prefersReduced ? false : { height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={prefersReduced ? {} : { height: 0, opacity: 0 }}
+                            transition={{ duration: 0.22, ease: 'easeInOut' }}
+                            className="overflow-hidden"
+                          >
+                            <div className="pl-2 pb-1 flex flex-col gap-0.5">
+                              {item.dropdown.map((sub, si) => (
+                                <Link
+                                  key={sub.href + sub.label}
+                                  href={sub.href}
+                                  ref={i === 0 && si === 0 ? firstLinkRef : undefined}
+                                  onClick={onClose}
+                                  className="flex flex-col px-3 py-2.5 rounded-xl text-neutral-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group"
+                                >
+                                  <span className="text-sm font-medium leading-tight">{sub.label}</span>
+                                  {sub.description && (
+                                    <span className="text-xs text-neutral-400 group-hover:text-blue-500 mt-0.5 leading-snug">
+                                      {sub.description}
+                                    </span>
+                                  )}
+                                </Link>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   );
                 }
+
                 return (
                   <Link
                     key={item.href}
@@ -119,18 +156,8 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
               })}
             </nav>
 
-            {/* CTAs al fondo */}
-            <div className="px-4 py-5 border-t border-neutral-100 flex flex-col gap-3">
-              <Button variant="secondary" asChild className="w-full justify-center">
-                <Link
-                  href={SITE_CONFIG.whatsappUrl('Hola, me gustaría saber más sobre smconnection')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={onClose}
-                >
-                  Escribir por WhatsApp
-                </Link>
-              </Button>
+            {/* CTA al fondo */}
+            <div className="px-4 py-5 border-t border-neutral-100">
               <Button variant="primary" asChild className="w-full justify-center">
                 <Link
                   href={SITE_CONFIG.calendarUrl}
@@ -138,7 +165,7 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
                   rel="noopener noreferrer"
                   onClick={onClose}
                 >
-                  Agenda diagnóstico gratis
+                  Haz crecer tu negocio →
                 </Link>
               </Button>
             </div>
