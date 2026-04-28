@@ -1,26 +1,127 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ── Design Tokens ──────────────────────────────────────────────────── */
+@theme {
+  /* Blues */
+  --color-blue-25:  #f8faff;
+  --color-blue-50:  #EEF4FF;
+  --color-blue-100: #d6e1ff;
+  --color-blue-200: #aacbff;
+  --color-blue-300: #6a9fff;
+  --color-blue-400: #2bb3ff;
+  --color-blue-500: #2B6EFF;
+  --color-blue-600: #1A5EFF;
+  --color-blue-700: #1249d4;
+  --color-blue-800: #0a2e8a;
+  --color-blue-900: #0a1c42;
+
+  /* Neutrals */
+  --color-neutral-0:   #ffffff;
+  --color-neutral-50:  #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+
+  /* Accents */
+  --color-purple-500: #bf95ff;
+  --color-cyan-400:   #2bb3ff;
+
+  /* Typography */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-size-base: 1.125rem;
+  --font-size-fluid-hero: clamp(2.25rem, 5vw + 1rem, 4.5rem);
+  --font-size-fluid-h2: clamp(1.875rem, 3vw + 1rem, 3rem);
+
+  /* Shadows */
+  --shadow-card:        0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --shadow-card-hover:  0 10px 25px -3px rgb(26 94 255 / 0.08), 0 4px 6px -4px rgb(26 94 255 / 0.05);
+  --shadow-cta:         0 4px 14px 0 rgb(26 94 255 / 0.35);
+  --shadow-cta-hover:   0 6px 20px 0 rgb(26 94 255 / 0.5);
+  --shadow-bento:       0 2px 8px 0 rgb(0 0 0 / 0.06), 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-bento-hover: 0 8px 24px -4px rgb(26 94 255 / 0.1);
+
+  /* Border radius */
+  --radius:    0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+
+  /* Animations */
+  --animate-gradient-shift: gradient-shift 8s ease infinite;
+  --animate-fade-up:        fade-up 0.6s ease forwards;
+  --animate-shimmer:        shimmer 2s linear infinite;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Keyframes ──────────────────────────────────────────────────────── */
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50%       { background-position: 100% 50%; }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@keyframes fade-up {
+  0%   { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+/* ── Custom Utilities ───────────────────────────────────────────────── */
+@utility gradient-text {
+  background: linear-gradient(90deg, #bf95ff, #2b6eff, #2bb3ff);
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 8s ease infinite;
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* ── Base ───────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #0f172a;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Focus visible ──────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #1A5EFF;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Selection ──────────────────────────────────────────────────────── */
+::selection {
+  background: #d6e1ff;
+  color: #0a2e8a;
 }
