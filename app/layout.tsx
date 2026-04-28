@@ -1,33 +1,34 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { SiteHeader } from '@/components/layout/site-header';
+import { SiteFooter } from '@/components/layout/site-footer';
+import { WhatsAppButton } from '@/components/ui/whatsapp-button';
+import { buildMetadata } from '@/lib/utils/metadata';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "ProyectoIA — Automatización e IA para tu empresa",
-  description: "Automatizamos procesos, conectamos sistemas y ponemos el Motor de IA a trabajar por tu empresa. Resultados en semanas.",
-};
+export const metadata: Metadata = buildMetadata();
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="es" className={inter.variable}>
+      <body>
+        <SiteHeader />
+        <main id="main-content" tabIndex={-1}>
+          {children}
+        </main>
+        <SiteFooter />
+        <WhatsAppButton />
+      </body>
     </html>
   );
 }
