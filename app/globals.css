@@ -35,7 +35,7 @@
   /* Typography */
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-size-base: 1.125rem;
-  --font-size-fluid-hero: clamp(2.25rem, 5vw + 1rem, 4.5rem);
+  --font-size-fluid-hero: clamp(1.875rem, 3.5vw + 0.5rem, 3.25rem);
   --font-size-fluid-h2: clamp(1.875rem, 3vw + 1rem, 3rem);
 
   /* Shadows */
