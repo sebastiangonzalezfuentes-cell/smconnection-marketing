@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PRICING_PLANS } from '@/lib/data/pricing';
+import { PRICING_PLANS, PRICING_FEATURES_TABLE, type PlanId } from '@/lib/data/pricing';
 import { cn } from '@/lib/utils/cn';
 
 // ── Estructura de la tabla comparativa ──────────────────────────────────────
@@ -63,17 +63,23 @@ const TABLE_CATEGORIES: TableCategory[] = [
   },
 ];
 
-// Busca el estado included para un plan dado el matchKey
+// Busca el valor de un feature para un plan dado el matchKey
 function resolveFeatureValue(
   planId: string,
   matchKey: string,
 ): { included: boolean; note?: string } | null {
-  const plan = PRICING_PLANS.find((p) => p.id === planId);
-  if (!plan) return null;
-  const match = plan.features.find((f) =>
-    f.label.toLowerCase().includes(matchKey.toLowerCase()),
-  );
-  return match ? { included: match.included, note: match.note } : null;
+  for (const category of PRICING_FEATURES_TABLE) {
+    const row = category.rows.find((r) =>
+      r.label.toLowerCase().includes(matchKey.toLowerCase()),
+    );
+    if (row) {
+      const value = row.values[planId as PlanId];
+      if (value === true) return { included: true };
+      if (value === false) return { included: false };
+      if (typeof value === 'string') return { included: true, note: value };
+    }
+  }
+  return null;
 }
 
 // ── Sub-componentes ──────────────────────────────────────────────────────────
