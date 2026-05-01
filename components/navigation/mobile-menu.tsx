@@ -134,6 +134,9 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
                     href={item.href ?? '#'}
                     ref={i === 0 ? firstLinkRef : undefined}
                     onClick={onClose}
+                    {...(item.external
+                      ? { target: '_blank', rel: 'noopener noreferrer' }
+                      : {})}
                     className="flex items-center px-3 py-3 rounded-xl text-neutral-700 hover:bg-blue-50 hover:text-blue-700 font-medium transition-colors text-sm"
                   >
                     {item.label}

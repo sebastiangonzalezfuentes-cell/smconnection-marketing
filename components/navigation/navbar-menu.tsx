@@ -91,6 +91,9 @@ export function NavbarMenu() {
           <Link
             key={item.href}
             href={item.href ?? '#'}
+            {...(item.external
+              ? { target: '_blank', rel: 'noopener noreferrer' }
+              : {})}
             className={cn(
               'px-3 py-2 rounded-radius',
               'text-sm font-medium text-neutral-700',

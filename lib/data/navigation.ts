@@ -12,6 +12,7 @@ export interface NavDropdownItem {
 export interface NavItem {
   label: string;
   href?: string;
+  external?: boolean;
   dropdown?: NavDropdownItem[];
 }
 
@@ -43,6 +44,6 @@ export const NAV_CONFIG: NavItem[] = [
   },
   { label: 'Casos de uso', href: '#casos-de-uso' },
   { label: 'Integraciones', href: '#integraciones' },
-  { label: 'Precios', href: '#precios' },
+  { label: 'Planes', href: '/planes', external: true },
   { label: 'FAQ', href: '#faq' },
 ];
