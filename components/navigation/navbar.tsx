@@ -26,8 +26,8 @@ export function Navbar() {
       <header className="fixed top-4 left-0 right-0 z-50 px-4 pointer-events-none">
         <div
           className={cn(
-            'mx-auto max-w-6xl pointer-events-auto',
-            'h-14 px-4 flex items-center justify-between gap-4',
+            'mx-auto w-fit max-w-[calc(100vw-2rem)] pointer-events-auto',
+            'h-14 px-4 flex items-center gap-2',
             'bg-white/90 backdrop-blur-md',
             'border border-neutral-200 rounded-2xl',
             'transition-all duration-300',
@@ -36,11 +36,9 @@ export function Navbar() {
               : 'shadow-[0_2px_8px_-2px_rgb(0_0_0/0.06)]',
           )}
         >
-          <div className="flex-1 flex items-center">
-            <NavbarLogo />
-          </div>
+          <NavbarLogo />
           <NavbarMenu />
-          <div className="flex-1 flex items-center justify-end gap-2">
+          <div className="flex items-center gap-2">
             <NavbarCtas />
             <MobileMenuTrigger open={mobileOpen} onToggle={toggleMobile} />
           </div>
