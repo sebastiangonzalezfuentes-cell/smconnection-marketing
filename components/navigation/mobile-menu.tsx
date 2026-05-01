@@ -165,7 +165,7 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
                   rel="noopener noreferrer"
                   onClick={onClose}
                 >
-                  Haz crecer tu negocio →
+                  Haz crecer tu negocio >
                 </Link>
               </Button>
             </div>

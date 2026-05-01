@@ -36,10 +36,14 @@ export function Navbar() {
               : 'shadow-[0_2px_8px_-2px_rgb(0_0_0/0.06)]',
           )}
         >
-          <NavbarLogo />
-          <NavbarMenu />
-          <NavbarCtas />
-          <MobileMenuTrigger open={mobileOpen} onToggle={toggleMobile} />
+          <div className="flex items-center gap-1">
+            <NavbarLogo />
+            <NavbarMenu />
+          </div>
+          <div className="flex items-center gap-2">
+            <NavbarCtas />
+            <MobileMenuTrigger open={mobileOpen} onToggle={toggleMobile} />
+          </div>
         </div>
       </header>
       <MobileMenu open={mobileOpen} onClose={closeMobile} />

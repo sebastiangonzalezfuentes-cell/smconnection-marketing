@@ -11,7 +11,7 @@ export function NavbarCtas() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Haz crecer tu negocio →
+          Haz crecer tu negocio >
         </Link>
       </Button>
     </div>
