@@ -22,12 +22,9 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
   useEffect(() => {
     if (open) {
       firstLinkRef.current?.focus();
-      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = '';
       setOpenDropdown(null);
     }
-    return () => { document.body.style.overflow = ''; };
   }, [open]);
 
   useEffect(() => {
@@ -46,17 +43,6 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
     <AnimatePresence>
       {open && (
         <>
-          {/* Backdrop */}
-          <motion.div
-            aria-hidden="true"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            onClick={onClose}
-            className="md:hidden fixed inset-0 z-40 bg-neutral-900/50 backdrop-blur-sm"
-          />
-
           {/* Drawer lateral desde la derecha */}
           <motion.div
             id="mobile-menu"
