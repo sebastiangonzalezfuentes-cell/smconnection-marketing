@@ -1,11 +1,9 @@
-export interface PricingFeature {
-  label: string;
-  included: boolean;
-  note?: string;
-}
+export type PlanId = 'discovery' | 'build' | 'support';
 
-export interface PricingPlan {
-  id: string;
+export type FeatureValue = true | false | string;
+
+export interface PricingPlanHeader {
+  id: PlanId;
   name: string;
   price: string;
   priceNote: string;
@@ -14,28 +12,32 @@ export interface PricingPlan {
   ctaHref: string;
   highlighted?: boolean;
   badge?: string;
-  features: PricingFeature[];
 }
 
-export const PRICING_PLANS: PricingPlan[] = [
+export interface FeatureRow {
+  label: string;
+  values: Record<PlanId, FeatureValue>;
+}
+
+export interface FeatureCategory {
+  name: string;
+  rows: FeatureRow[];
+}
+
+export interface PricingFaq {
+  question: string;
+  answer: string;
+}
+
+export const PRICING_PLANS: PricingPlanHeader[] = [
   {
     id: 'discovery',
     name: 'Discovery Sprint',
     price: 'Desde 19 UF',
     priceNote: '~$750.000 CLP',
-    description: 'El primer paso. Entiende exactamente qué automatizar y cuánto recuperas.',
+    description: 'El primer paso. Entiende qué automatizar y cuánto recuperas antes de invertir.',
     cta: 'Agendar diagnóstico',
     ctaHref: 'https://cal.com/smconnection/diagnostico',
-    features: [
-      { label: 'Mapeo de procesos actuales', included: true },
-      { label: 'Identificación de quick wins', included: true },
-      { label: 'Plan de automatización con ROI', included: true },
-      { label: 'Sesión de presentación ejecutiva', included: true },
-      { label: 'Entrega en 5 días hábiles', included: true },
-      { label: 'Garantía de devolución si no hay valor', included: true },
-      { label: 'Implementación incluida', included: false },
-      { label: 'Soporte post-entrega', included: false },
-    ],
   },
   {
     id: 'build',
@@ -47,16 +49,6 @@ export const PRICING_PLANS: PricingPlan[] = [
     ctaHref: 'https://wa.me/56955361419',
     highlighted: true,
     badge: 'Más elegido',
-    features: [
-      { label: 'Discovery incluido', included: true },
-      { label: 'Desarrollo 100% a medida', included: true },
-      { label: 'Código fuente entregado', included: true },
-      { label: 'Documentación técnica', included: true },
-      { label: 'Capacitación al equipo', included: true },
-      { label: 'Garantía de 3 meses', included: true },
-      { label: 'Integraciones ilimitadas', included: true },
-      { label: 'Soporte prioritario opcional', included: true, note: 'Project + Support' },
-    ],
   },
   {
     id: 'support',
@@ -66,15 +58,140 @@ export const PRICING_PLANS: PricingPlan[] = [
     description: 'Tu operación en producción, con respaldo real y mejoras continuas.',
     cta: 'Consultar disponibilidad',
     ctaHref: 'https://wa.me/56955361419',
-    features: [
-      { label: 'Monitoreo 24/7', included: true },
-      { label: 'Soporte técnico prioritario', included: true },
-      { label: 'Ajustes y mejoras mensuales', included: true },
-      { label: 'Reporte mensual de resultados', included: true },
-      { label: 'Acceso directo al equipo técnico', included: true },
-      { label: 'SLA garantizado', included: true },
-      { label: 'Nuevas integraciones incluidas', included: false, note: 'Cotización aparte' },
-      { label: 'Desarrollo de nuevas features', included: false, note: 'Cotización aparte' },
+  },
+];
+
+export const PRICING_FEATURES_TABLE: FeatureCategory[] = [
+  {
+    name: 'Diagnóstico',
+    rows: [
+      {
+        label: 'Mapeo de procesos',
+        values: { discovery: true, build: true, support: false },
+      },
+      {
+        label: 'Identificación de quick wins',
+        values: { discovery: true, build: true, support: false },
+      },
+      {
+        label: 'Plan con ROI estimado',
+        values: { discovery: true, build: true, support: false },
+      },
+      {
+        label: 'Entrega en 5 días hábiles',
+        values: { discovery: true, build: true, support: false },
+      },
     ],
+  },
+  {
+    name: 'Desarrollo',
+    rows: [
+      {
+        label: 'Desarrollo 100% a medida',
+        values: { discovery: false, build: true, support: false },
+      },
+      {
+        label: 'Código fuente entregado',
+        values: { discovery: false, build: true, support: false },
+      },
+      {
+        label: 'Documentación técnica',
+        values: { discovery: false, build: true, support: false },
+      },
+      {
+        label: 'Capacitación al equipo',
+        values: { discovery: false, build: true, support: false },
+      },
+      {
+        label: 'Integraciones ilimitadas',
+        values: { discovery: false, build: true, support: false },
+      },
+    ],
+  },
+  {
+    name: 'Soporte',
+    rows: [
+      {
+        label: 'Monitoreo 24/7',
+        values: { discovery: false, build: false, support: true },
+      },
+      {
+        label: 'Soporte técnico prioritario',
+        values: { discovery: false, build: 'Opcional', support: true },
+      },
+      {
+        label: 'Ajustes y mejoras mensuales',
+        values: { discovery: false, build: false, support: true },
+      },
+      {
+        label: 'Acceso directo al equipo',
+        values: { discovery: false, build: false, support: true },
+      },
+      {
+        label: 'SLA garantizado',
+        values: { discovery: false, build: false, support: true },
+      },
+      {
+        label: 'Reporte mensual de resultados',
+        values: { discovery: false, build: false, support: true },
+      },
+    ],
+  },
+  {
+    name: 'Garantías',
+    rows: [
+      {
+        label: 'Garantía de devolución',
+        values: { discovery: true, build: false, support: false },
+      },
+      {
+        label: 'Garantía de 3 meses',
+        values: { discovery: false, build: true, support: false },
+      },
+      {
+        label: 'Contrato mensual sin permanencia',
+        values: { discovery: false, build: false, support: true },
+      },
+    ],
+  },
+];
+
+export const PRICING_FAQS: PricingFaq[] = [
+  {
+    question: '¿Por qué empezar con el Discovery Sprint?',
+    answer:
+      'Porque no tiene sentido invertir en automatización sin saber qué automatizar primero. ' +
+      'El Discovery te da un mapa claro con ROI estimado antes de comprometer presupuesto.',
+  },
+  {
+    question: '¿Cuánto tiempo toma un proyecto Build Premium?',
+    answer:
+      'Depende del alcance, pero la mayoría de los proyectos se entregan en 4 a 12 semanas. ' +
+      'Definimos el timeline exacto en el Discovery.',
+  },
+  {
+    question: '¿El código fuente es mío?',
+    answer:
+      'Sí, 100%. Todo el código desarrollado en Build Premium te pertenece. ' +
+      'Sin licencias ni dependencia de nuestra plataforma.',
+  },
+  {
+    question: '¿Puedo contratar el soporte sin haber hecho el Build con SmartConnection?',
+    answer:
+      'Sí, siempre que el sistema en producción sea compatible. ' +
+      'Hacemos una revisión técnica inicial sin costo.',
+  },
+  {
+    question: '¿Los precios están en UF? ¿Por qué?',
+    answer:
+      'Sí, para que tu presupuesto no se vea afectado por la variación del dólar o el euro. ' +
+      'La UF te da estabilidad real en proyectos de varios meses.',
+  },
+  {
+    question: '¿Tienen garantía de resultados?',
+    answer:
+      'En el Discovery, si no identificamos oportunidades de automatización con ROI positivo, ' +
+      'te devolvemos el 100%. En Build Premium, garantizamos el correcto funcionamiento del ' +
+      'sistema por 3 meses post-entrega.',
   },
 ];

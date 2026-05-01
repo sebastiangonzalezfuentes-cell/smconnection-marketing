@@ -53,9 +53,11 @@
   --radius-3xl: 1.5rem;
 
   /* Animations */
-  --animate-gradient-shift: gradient-shift 8s ease infinite;
-  --animate-fade-up:        fade-up 0.6s ease forwards;
-  --animate-shimmer:        shimmer 2s linear infinite;
+  --animate-gradient-shift:   gradient-shift 8s ease infinite;
+  --animate-fade-up:          fade-up 0.6s ease forwards;
+  --animate-shimmer:          shimmer 2s linear infinite;
+  --animate-accordion-down:   accordion-down 0.25s ease-out;
+  --animate-accordion-up:     accordion-up 0.25s ease-out;
 
   /* Section Label (eyebrow badge) */
   --section-label-bg:     rgba(43, 110, 255, 0.08);
@@ -77,6 +79,16 @@
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position:  200% 0; }
+}
+
+@keyframes accordion-down {
+  from { height: 0; }
+  to   { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to   { height: 0; }
 }
 
 /* ── Custom Utilities ───────────────────────────────────────────────── */
