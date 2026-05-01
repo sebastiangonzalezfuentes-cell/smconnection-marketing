@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from 'next/link';
 import { Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -221,12 +222,9 @@ function DesktopTable() {
 
         <tbody>
           {TABLE_CATEGORIES.map((category) => (
-            <>
+            <React.Fragment key={category.title}>
               {/* Fila de categoría */}
-              <tr
-                key={category.title}
-                className="border-t border-neutral-100"
-              >
+              <tr className="border-t border-neutral-100">
                 <td
                   colSpan={PRICING_PLANS.length + 1}
                   className="px-6 py-3 bg-neutral-50"
@@ -256,7 +254,7 @@ function DesktopTable() {
                   ))}
                 </tr>
               ))}
-            </>
+            </React.Fragment>
           ))}
         </tbody>
 

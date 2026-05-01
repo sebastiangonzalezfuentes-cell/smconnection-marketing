@@ -44,6 +44,6 @@ export const NAV_CONFIG: NavItem[] = [
   },
   { label: 'Casos de uso', href: '#casos-de-uso' },
   { label: 'Integraciones', href: '#integraciones' },
-  { label: 'Planes', href: '/planes', external: true },
+  { label: 'Planes', href: '/planes' },
   { label: 'FAQ', href: '#faq' },
 ];
