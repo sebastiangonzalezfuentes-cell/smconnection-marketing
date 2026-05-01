@@ -5,7 +5,7 @@ import { SITE_CONFIG } from '@/lib/constants/site';
 export function NavbarCtas() {
   return (
     <div className="flex items-center">
-      <Button variant="primary" size="sm" asChild>
+      <Button variant="primary" size="sm" asChild className="rounded-full">
         <Link
           href={SITE_CONFIG.calendarUrl}
           target="_blank"
