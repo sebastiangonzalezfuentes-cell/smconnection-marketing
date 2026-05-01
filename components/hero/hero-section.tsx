@@ -13,8 +13,8 @@ export function HeroSection() {
     >
       <HeroBackground />
 
-      <div className="relative mx-auto max-w-4xl flex flex-col gap-6">
-        <SectionLabel className="self-center">IA que conecta ERP y sistemas reales.</SectionLabel>
+      <div className="relative mx-auto max-w-4xl flex flex-col items-center gap-6 text-center">
+        <SectionLabel>IA que conecta ERP y sistemas reales.</SectionLabel>
         <HeroHeadline />
         <HeroSubheadline />
         <HeroCtas />
