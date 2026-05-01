@@ -58,12 +58,9 @@
   --animate-shimmer:        shimmer 2s linear infinite;
 
   /* Section Label (eyebrow badge) */
-  --section-label-bg:           rgb(15 23 42 / 0.72);
-  --section-label-border-start: #f97316;
-  --section-label-border-end:   #facc15;
-  --section-label-glow:         0 0 18px 2px rgb(249 115 22 / 0.22);
-  --section-label-text:         #fef3c7;
-  --section-label-star-size:    0.875rem;
+  --section-label-bg:     rgba(43, 110, 255, 0.08);
+  --section-label-border: rgba(43, 110, 255, 0.28);
+  --section-label-text:   #2B6EFF;
 }
 
 /* ── Keyframes ──────────────────────────────────────────────────────── */
@@ -101,39 +98,13 @@
   &::-webkit-scrollbar { display: none; }
 }
 
-/* ── Section Label (eyebrow badge — estilo Justo) ───────────────────── */
-/*
- * Técnica: el wrapper actúa como "borde" con gradiente via background.
- * El inner tiene su propio fondo oscuro con padding para que el wrapper
- * quede visible solo como un halo de 1px — efecto gradient-border pill.
- */
+/* ── Section Label (eyebrow badge — estilo getjusto) ────────────────── */
 .section-label-wrapper {
   display: inline-flex;
   border-radius: 9999px;
-  padding: 1px;
-  background: linear-gradient(
-    135deg,
-    var(--section-label-border-start),
-    var(--section-label-border-end)
-  );
-  box-shadow: var(--section-label-glow);
-}
-
-.section-label-inner {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.875rem;
-  border-radius: 9999px;
+  padding: 0.375rem 1rem;
   background: var(--section-label-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.section-label-star {
-  font-size: var(--section-label-star-size);
-  line-height: 1;
-  flex-shrink: 0;
+  border: 1px solid var(--section-label-border);
 }
 
 .section-label-text {
