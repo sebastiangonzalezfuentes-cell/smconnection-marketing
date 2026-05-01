@@ -1,4 +1,4 @@
-export type PlanId = 'discovery' | 'build' | 'support';
+export type PlanId = 'discovery' | 'saas' | 'build' | 'support';
 
 export type FeatureValue = true | false | string;
 
@@ -32,20 +32,29 @@ export interface PricingFaq {
 export const PRICING_PLANS: PricingPlanHeader[] = [
   {
     id: 'discovery',
-    name: 'Discovery Sprint',
+    name: 'Discovery & Design Sprint',
     price: 'Desde 19 UF',
     priceNote: '~$750.000 CLP',
-    description: 'El primer paso. Entiende qué automatizar y cuánto recuperas antes de invertir.',
-    cta: 'Agendar diagnóstico',
+    description: 'Pagas por claridad, no por código. Una semana para saber exactamente qué construir.',
+    cta: 'Agendar Discovery',
     ctaHref: 'https://cal.com/smconnection/diagnostico',
+  },
+  {
+    id: 'saas',
+    name: 'SaaS Start',
+    price: 'Próximamente',
+    priceNote: 'Sin inversión inicial',
+    description: 'Plataforma lista, activación en días sin desarrollo a medida.',
+    cta: 'Empezar aquí',
+    ctaHref: 'https://wa.me/56955361419',
   },
   {
     id: 'build',
     name: 'Build Premium',
     price: '50–750 UF',
     priceNote: 'Según alcance',
-    description: 'Automatizaciones a medida. Código fuente tuyo. Resultados desde el mes 1.',
-    cta: 'Hablar con un experto',
+    description: 'Software funcionando con código propio, sin dependencia de terceros.',
+    cta: 'Cotizar proyecto',
     ctaHref: 'https://wa.me/56955361419',
     highlighted: true,
     badge: 'Más elegido',
@@ -53,10 +62,10 @@ export const PRICING_PLANS: PricingPlanHeader[] = [
   {
     id: 'support',
     name: 'Project + Support',
-    price: 'Contrato mensual',
+    price: 'Semestral / Anual',
     priceNote: 'Según servicio activo',
-    description: 'Tu operación en producción, con respaldo real y mejoras continuas.',
-    cta: 'Consultar disponibilidad',
+    description: 'Equipo técnico externo con operación continua y respaldo real.',
+    cta: 'Quiero soporte total',
     ctaHref: 'https://wa.me/56955361419',
   },
 ];
@@ -66,45 +75,49 @@ export const PRICING_FEATURES_TABLE: FeatureCategory[] = [
     name: 'Diagnóstico',
     rows: [
       {
-        label: 'Mapeo de procesos',
-        values: { discovery: true, build: true, support: false },
+        label: 'Mapa de procesos actuales',
+        values: { discovery: true, saas: false, build: true, support: false },
       },
       {
-        label: 'Identificación de quick wins',
-        values: { discovery: true, build: true, support: false },
+        label: 'Diagnóstico de cuellos de botella con impacto en CLP',
+        values: { discovery: true, saas: false, build: true, support: false },
       },
       {
-        label: 'Plan con ROI estimado',
-        values: { discovery: true, build: true, support: false },
+        label: 'Plan con alternativas y presupuesto real',
+        values: { discovery: true, saas: false, build: true, support: false },
       },
       {
-        label: 'Entrega en 5 días hábiles',
-        values: { discovery: true, build: true, support: false },
+        label: 'Entrega en 1 semana sin compromiso',
+        values: { discovery: true, saas: false, build: false, support: false },
       },
     ],
   },
   {
-    name: 'Desarrollo',
+    name: 'Implementación',
     rows: [
       {
-        label: 'Desarrollo 100% a medida',
-        values: { discovery: false, build: true, support: false },
+        label: 'Quick wins en primera semana',
+        values: { discovery: false, saas: true, build: false, support: false },
       },
       {
-        label: 'Código fuente entregado',
-        values: { discovery: false, build: true, support: false },
+        label: 'Sin inversión inicial ni desarrollo',
+        values: { discovery: false, saas: true, build: false, support: false },
       },
       {
-        label: 'Documentación técnica',
-        values: { discovery: false, build: true, support: false },
+        label: 'Software funcionando (no maqueta)',
+        values: { discovery: false, saas: false, build: true, support: true },
       },
       {
-        label: 'Capacitación al equipo',
-        values: { discovery: false, build: true, support: false },
+        label: 'Repositorio y código 100% tuyo',
+        values: { discovery: false, saas: false, build: true, support: true },
       },
       {
-        label: 'Integraciones ilimitadas',
-        values: { discovery: false, build: true, support: false },
+        label: 'Entrega por hitos con precio fijo',
+        values: { discovery: false, saas: false, build: true, support: false },
+      },
+      {
+        label: 'Capacitación al entregar',
+        values: { discovery: false, saas: false, build: true, support: true },
       },
     ],
   },
@@ -112,45 +125,37 @@ export const PRICING_FEATURES_TABLE: FeatureCategory[] = [
     name: 'Soporte',
     rows: [
       {
+        label: 'Soporte y actualizaciones incluidos',
+        values: { discovery: false, saas: true, build: false, support: true },
+      },
+      {
         label: 'Monitoreo 24/7',
-        values: { discovery: false, build: false, support: true },
+        values: { discovery: false, saas: false, build: false, support: true },
       },
       {
-        label: 'Soporte técnico prioritario',
-        values: { discovery: false, build: 'Opcional', support: true },
-      },
-      {
-        label: 'Ajustes y mejoras mensuales',
-        values: { discovery: false, build: false, support: true },
-      },
-      {
-        label: 'Acceso directo al equipo',
-        values: { discovery: false, build: false, support: true },
+        label: 'Ajustes continuos',
+        values: { discovery: false, saas: false, build: false, support: true },
       },
       {
         label: 'SLA garantizado',
-        values: { discovery: false, build: false, support: true },
+        values: { discovery: false, saas: false, build: false, support: true },
       },
       {
-        label: 'Reporte mensual de resultados',
-        values: { discovery: false, build: false, support: true },
+        label: 'Acceso directo al equipo',
+        values: { discovery: false, saas: false, build: false, support: true },
       },
     ],
   },
   {
-    name: 'Garantías',
+    name: 'Integraciones',
     rows: [
       {
-        label: 'Garantía de devolución',
-        values: { discovery: true, build: false, support: false },
+        label: 'Integraciones con sistemas actuales',
+        values: { discovery: false, saas: true, build: true, support: true },
       },
       {
-        label: 'Garantía de 3 meses',
-        values: { discovery: false, build: true, support: false },
-      },
-      {
-        label: 'Contrato mensual sin permanencia',
-        values: { discovery: false, build: false, support: true },
+        label: 'Escala a Build Premium cuando quieras',
+        values: { discovery: false, saas: true, build: false, support: false },
       },
     ],
   },
