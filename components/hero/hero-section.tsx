@@ -14,7 +14,7 @@ export function HeroSection() {
       <HeroBackground />
 
       <div className="relative mx-auto max-w-4xl flex flex-col gap-6">
-        <SectionLabel>Automatización empresarial en Chile</SectionLabel>
+        <SectionLabel>IA que conecta ERP y sistemas reales.</SectionLabel>
         <HeroHeadline />
         <HeroSubheadline />
         <HeroCtas />
