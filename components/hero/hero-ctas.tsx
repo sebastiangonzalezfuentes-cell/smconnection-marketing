@@ -28,7 +28,7 @@ export function HeroCtas() {
         animate="visible"
         variants={variants}
       >
-        <Button variant="primary" size="lg" asChild>
+        <Button variant="primary" size="lg" asChild className="rounded-full">
           <Link
             href={SITE_CONFIG.calendarUrl}
             target="_blank"

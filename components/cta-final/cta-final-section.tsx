@@ -44,7 +44,7 @@ export function CtaFinalSection() {
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <Button variant="primary" size="lg" asChild>
+          <Button variant="primary" size="lg" asChild className="rounded-full">
             <Link
               href={SITE_CONFIG.calendarUrl}
               target="_blank"
