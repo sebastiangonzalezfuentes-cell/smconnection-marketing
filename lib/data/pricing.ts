@@ -5,8 +5,16 @@ export type FeatureValue = true | false | string;
 export interface PricingPlanHeader {
   id: PlanId;
   name: string;
-  price: string;
+  price: string;       // precio base (para planes no-recurrentes)
   priceNote: string;
+  // Campos para toggle mensual/anual — solo en planes isRecurring: true
+  priceMonthly?: string;
+  priceMonthlyNote?: string;
+  priceAnnual?: string;
+  priceAnnualNote?: string;
+  annualSavings?: string;  // ej: "2 meses gratis"
+  isRecurring?: boolean;
+  features?: string[];
   description: string;
   cta: string;
   ctaHref: string;
@@ -32,10 +40,20 @@ export interface PricingFaq {
 export const PRICING_PLANS: PricingPlanHeader[] = [
   {
     id: 'discovery',
-    name: 'Discovery & Design Sprint',
+    name: 'Prototipa el Futuro Hoy',
     price: 'Desde 19 UF',
-    priceNote: '~$750.000 CLP',
-    description: 'Pagas por claridad, no por código. Una semana para saber exactamente qué construir.',
+    priceNote: 'pago único · sin compromiso',
+    isRecurring: false,
+    badge: 'Empezar aquí',
+    features: [
+      'Mapa completo de tus procesos actuales',
+      'Diagnóstico de 3 cuellos de botella con impacto estimado en CLP',
+      'Plan de solución con alternativas (SaaS, Build o híbrido) y presupuesto real',
+      'Entregables concretos en 1 semana — sin compromiso de build',
+    ],
+    description:
+      'Pagas por claridad, no por código. Una semana para saber exactamente qué construir y cuánto ' +
+      'invertir — antes de gastar en desarrollo.',
     cta: 'Agendar Discovery',
     ctaHref: 'https://cal.com/smconnection/diagnostico',
   },
@@ -44,7 +62,23 @@ export const PRICING_PLANS: PricingPlanHeader[] = [
     name: 'SaaS Start',
     price: 'Próximamente',
     priceNote: 'Sin inversión inicial',
-    description: 'Plataforma lista, activación en días sin desarrollo a medida.',
+    isRecurring: true,
+    priceMonthly: 'Próximamente',
+    priceMonthlyNote: '',
+    priceAnnual: 'Próximamente',
+    priceAnnualNote: '',
+    highlighted: true,
+    badge: 'Más popular',
+    features: [
+      'Quick wins visibles en la primera semana',
+      'Sin inversión inicial ni desarrollo',
+      'Soporte y actualizaciones incluidos',
+      'Escala a Build Premium cuando quieras',
+      'Integraciones con tus sistemas actuales',
+    ],
+    description:
+      'Ya sabes lo que necesitas y quieres resultados esta semana. Plataforma lista, activamos en ' +
+      'días, sin desarrollo.',
     cta: 'Empezar aquí',
     ctaHref: 'https://wa.me/56955361419',
   },
@@ -52,19 +86,44 @@ export const PRICING_PLANS: PricingPlanHeader[] = [
     id: 'build',
     name: 'Build Premium',
     price: '50–750 UF',
-    priceNote: 'Según alcance',
-    description: 'Software funcionando con código propio, sin dependencia de terceros.',
+    priceNote: 'según alcance · precio fijo',
+    isRecurring: false,
+    badge: 'Tú eres el dueño',
+    features: [
+      'Software funcionando — no una maqueta',
+      'Repositorio y código 100% tuyo',
+      'Entrega por hitos con precio fijo acordado',
+      'Sin dependencia de SMC para operar',
+      'Capacitación a tu equipo al entregar',
+    ],
+    description:
+      'El Discovery te entrega el mapa. Build Premium construye el producto real: software ' +
+      'funcionando, código tuyo, sin dependencia de SMC para operar.',
     cta: 'Cotizar proyecto',
     ctaHref: 'https://wa.me/56955361419',
-    highlighted: true,
-    badge: 'Más elegido',
   },
   {
     id: 'support',
     name: 'Project + Support',
-    price: 'Semestral / Anual',
-    priceNote: 'Según servicio activo',
-    description: 'Equipo técnico externo con operación continua y respaldo real.',
+    price: 'Desde 15 UF',
+    priceNote: '/mes · pago mensual',
+    isRecurring: true,
+    priceMonthly: 'Desde 15 UF',
+    priceMonthlyNote: '/mes · cobrado mensualmente',
+    priceAnnual: 'Desde 13 UF',
+    priceAnnualNote: '/mes · cobrado anualmente',
+    annualSavings: '2 meses gratis',
+    badge: 'Todo incluido',
+    features: [
+      'Todo lo de Build Premium',
+      'Monitoreo activo 24/7',
+      'Ajustes y mejoras continuas',
+      'Contrato SLA con tiempos de respuesta',
+      'Acceso directo al equipo vía canal dedicado',
+    ],
+    description:
+      'Tu equipo técnico externo, siempre activo. Sin contratar developers. Operación continua ' +
+      'con contrato y soporte garantizado.',
     cta: 'Quiero soporte total',
     ctaHref: 'https://wa.me/56955361419',
   },
@@ -75,19 +134,19 @@ export const PRICING_FEATURES_TABLE: FeatureCategory[] = [
     name: 'Diagnóstico',
     rows: [
       {
-        label: 'Mapa de procesos actuales',
+        label: 'Mapa completo de tus procesos actuales',
         values: { discovery: true, saas: false, build: true, support: false },
       },
       {
-        label: 'Diagnóstico de cuellos de botella con impacto en CLP',
+        label: 'Diagnóstico de 3 cuellos de botella con impacto estimado en CLP',
+        values: { discovery: true, saas: false, build: false, support: false },
+      },
+      {
+        label: 'Plan de solución con alternativas (SaaS, Build o híbrido) y presupuesto real',
         values: { discovery: true, saas: false, build: true, support: false },
       },
       {
-        label: 'Plan con alternativas y presupuesto real',
-        values: { discovery: true, saas: false, build: true, support: false },
-      },
-      {
-        label: 'Entrega en 1 semana sin compromiso',
+        label: 'Entregables concretos en 1 semana — sin compromiso de build',
         values: { discovery: true, saas: false, build: false, support: false },
       },
     ],
@@ -96,7 +155,7 @@ export const PRICING_FEATURES_TABLE: FeatureCategory[] = [
     name: 'Implementación',
     rows: [
       {
-        label: 'Quick wins en primera semana',
+        label: 'Resultados visibles en primera semana',
         values: { discovery: false, saas: true, build: false, support: false },
       },
       {
@@ -108,7 +167,7 @@ export const PRICING_FEATURES_TABLE: FeatureCategory[] = [
         values: { discovery: false, saas: false, build: true, support: true },
       },
       {
-        label: 'Repositorio y código 100% tuyo',
+        label: 'Repositorio y código 100% propio',
         values: { discovery: false, saas: false, build: true, support: true },
       },
       {
@@ -116,7 +175,11 @@ export const PRICING_FEATURES_TABLE: FeatureCategory[] = [
         values: { discovery: false, saas: false, build: true, support: false },
       },
       {
-        label: 'Capacitación al entregar',
+        label: 'Sin dependencia post-entrega',
+        values: { discovery: false, saas: false, build: true, support: false },
+      },
+      {
+        label: 'Capacitación incluida al entregar',
         values: { discovery: false, saas: false, build: true, support: true },
       },
     ],
@@ -129,15 +192,15 @@ export const PRICING_FEATURES_TABLE: FeatureCategory[] = [
         values: { discovery: false, saas: true, build: false, support: true },
       },
       {
-        label: 'Monitoreo 24/7',
+        label: 'Monitoreo activo 24/7',
         values: { discovery: false, saas: false, build: false, support: true },
       },
       {
-        label: 'Ajustes continuos',
+        label: 'Ajustes y mejoras continuas',
         values: { discovery: false, saas: false, build: false, support: true },
       },
       {
-        label: 'SLA garantizado',
+        label: 'Contrato SLA con tiempos de respuesta',
         values: { discovery: false, saas: false, build: false, support: true },
       },
       {
@@ -154,7 +217,7 @@ export const PRICING_FEATURES_TABLE: FeatureCategory[] = [
         values: { discovery: false, saas: true, build: true, support: true },
       },
       {
-        label: 'Escala a Build Premium cuando quieras',
+        label: 'Escalable a Build Premium',
         values: { discovery: false, saas: true, build: false, support: false },
       },
     ],

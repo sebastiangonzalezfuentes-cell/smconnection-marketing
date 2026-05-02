@@ -1,4 +1,3 @@
-import { AnnouncementBar } from '@/components/layout/announcement-bar';
 import { Navbar } from '@/components/navigation/navbar';
 
 export function SiteHeader() {
@@ -7,7 +6,6 @@ export function SiteHeader() {
       <Navbar />
       {/* Spacer = top-4 (16px) + h-14 (56px) del navbar flotante */}
       <div className="h-[72px]" aria-hidden="true" />
-      <AnnouncementBar />
     </>
   );
 }

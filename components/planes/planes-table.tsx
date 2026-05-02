@@ -1,339 +1,150 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { Check, X } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PRICING_PLANS, PRICING_FEATURES_TABLE, type PlanId } from '@/lib/data/pricing';
+import {
+  PRICING_PLANS,
+  type PricingPlanHeader,
+} from '@/lib/data/pricing';
 import { cn } from '@/lib/utils/cn';
 
-// ── Estructura de la tabla comparativa ──────────────────────────────────────
-//
-// Cada categoría agrupa features. El mapeado entre features del pricing.ts y
-// las celdas de la tabla se hace por coincidencia parcial de etiqueta.
-// Esto evita duplicar los datos y mantiene pricing.ts como fuente única.
+// ── Tipos de billing cycle ───────────────────────────────────────────────────
 
-interface TableFeature {
-  label: string;
-  /** Qué substring de PricingFeature.label debe coincidir para buscar el valor */
-  matchKey: string;
-}
+type BillingCycle = 'monthly' | 'annual';
 
-interface TableCategory {
-  title: string;
-  features: TableFeature[];
-}
+// ── Helpers de precio ────────────────────────────────────────────────────────
 
-const TABLE_CATEGORIES: TableCategory[] = [
-  {
-    title: 'Diagnóstico',
-    features: [
-      { label: 'Mapa de procesos actuales',                       matchKey: 'procesos actuales' },
-      { label: 'Diagnóstico de cuellos de botella con impacto',   matchKey: 'cuellos de botella' },
-      { label: 'Plan con alternativas y presupuesto real',         matchKey: 'presupuesto real' },
-      { label: 'Entrega en 1 semana sin compromiso',              matchKey: 'semana sin compromiso' },
-    ],
-  },
-  {
-    title: 'Implementación',
-    features: [
-      { label: 'Quick wins en primera semana',                    matchKey: 'Quick wins' },
-      { label: 'Sin inversión inicial ni desarrollo',             matchKey: 'inversión inicial' },
-      { label: 'Software funcionando (no maqueta)',               matchKey: 'no maqueta' },
-      { label: 'Repositorio y código 100% tuyo',                  matchKey: 'código 100%' },
-      { label: 'Entrega por hitos con precio fijo',               matchKey: 'precio fijo' },
-      { label: 'Capacitación al entregar',                        matchKey: 'Capacitación' },
-    ],
-  },
-  {
-    title: 'Soporte',
-    features: [
-      { label: 'Soporte y actualizaciones incluidos',             matchKey: 'actualizaciones' },
-      { label: 'Monitoreo 24/7',                                  matchKey: 'Monitoreo' },
-      { label: 'Ajustes continuos',                               matchKey: 'Ajustes' },
-      { label: 'SLA garantizado',                                 matchKey: 'SLA' },
-      { label: 'Acceso directo al equipo',                        matchKey: 'Acceso directo' },
-    ],
-  },
-  {
-    title: 'Integraciones',
-    features: [
-      { label: 'Integraciones con sistemas actuales',             matchKey: 'sistemas actuales' },
-      { label: 'Escala a Build Premium cuando quieras',           matchKey: 'Escala' },
-    ],
-  },
-];
-
-// Busca el valor de un feature para un plan dado el matchKey
-function resolveFeatureValue(
-  planId: string,
-  matchKey: string,
-): { included: boolean; note?: string } | null {
-  for (const category of PRICING_FEATURES_TABLE) {
-    const row = category.rows.find((r) =>
-      r.label.toLowerCase().includes(matchKey.toLowerCase()),
-    );
-    if (row) {
-      const value = row.values[planId as PlanId];
-      if (value === true) return { included: true };
-      if (value === false) return { included: false };
-      if (typeof value === 'string') return { included: true, note: value };
-    }
+function getDisplayPrice(
+  plan: PricingPlanHeader,
+  cycle: BillingCycle,
+): { price: string; note: string } {
+  if (!plan.isRecurring) {
+    return { price: plan.price, note: plan.priceNote };
   }
-  return null;
+
+  if (cycle === 'annual') {
+    return {
+      price: plan.priceAnnual ?? plan.price,
+      note: plan.priceAnnualNote ?? plan.priceNote,
+    };
+  }
+
+  return {
+    price: plan.priceMonthly ?? plan.price,
+    note: plan.priceMonthlyNote ?? plan.priceNote,
+  };
 }
 
-// ── Sub-componentes ──────────────────────────────────────────────────────────
+// ── Toggle mensual/anual ─────────────────────────────────────────────────────
 
-function CheckIcon() {
+interface BillingToggleProps {
+  cycle: BillingCycle;
+  onChange: (cycle: BillingCycle) => void;
+  annualSavingsLabel: string;
+}
+
+function BillingToggle({ cycle, onChange, annualSavingsLabel }: BillingToggleProps) {
   return (
-    <Check
-      className="mx-auto size-5 text-blue-600"
-      aria-hidden="true"
-      strokeWidth={2.5}
-    />
-  );
-}
-
-function CrossIcon() {
-  return (
-    <X
-      className="mx-auto size-4 text-neutral-300"
-      aria-hidden="true"
-      strokeWidth={2}
-    />
-  );
-}
-
-function FeatureCell({
-  planId,
-  matchKey,
-  highlighted,
-}: {
-  planId: string;
-  matchKey: string;
-  highlighted: boolean;
-}) {
-  const value = resolveFeatureValue(planId, matchKey);
-
-  if (!value) {
-    return (
-      <td
+    <div className="flex flex-col items-center gap-2 mb-10">
+      <div
+        role="group"
+        aria-label="Ciclo de facturación"
         className={cn(
-          'px-4 py-3.5 text-center',
-          highlighted ? 'bg-blue-50' : 'bg-white',
+          'inline-flex items-center rounded-full p-1',
+          'bg-neutral-100 border border-neutral-200',
         )}
       >
-        <CrossIcon />
-      </td>
-    );
-  }
-
-  return (
-    <td
-      className={cn(
-        'px-4 py-3.5 text-center',
-        highlighted ? 'bg-blue-50' : 'bg-white',
-      )}
-    >
-      {value.included ? (
-        <span title={value.note}>
-          <CheckIcon />
-          {value.note && (
-            <span className="block text-[11px] text-neutral-400 mt-0.5 leading-tight">
-              {value.note}
-            </span>
+        <button
+          type="button"
+          onClick={() => onChange('monthly')}
+          aria-pressed={cycle === 'monthly'}
+          className={cn(
+            'rounded-full px-5 py-2 text-sm font-medium transition-all duration-200',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
+            cycle === 'monthly'
+              ? 'bg-neutral-900 text-white shadow-sm'
+              : 'text-neutral-600 hover:text-neutral-900',
           )}
-        </span>
-      ) : (
-        <span title={value.note}>
-          <CrossIcon />
-          {value.note && (
-            <span className="block text-[11px] text-neutral-400 mt-0.5 leading-tight">
-              {value.note}
-            </span>
+        >
+          Mensual
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange('annual')}
+          aria-pressed={cycle === 'annual'}
+          className={cn(
+            'rounded-full px-5 py-2 text-sm font-medium transition-all duration-200',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
+            'flex items-center gap-2',
+            cycle === 'annual'
+              ? 'bg-neutral-900 text-white shadow-sm'
+              : 'text-neutral-600 hover:text-neutral-900',
           )}
-        </span>
+        >
+          Anual
+          {/* Badge siempre visible como incentivo — independiente del ciclo activo */}
+          <span className="rounded-full bg-green-500 px-2 py-0.5 text-[10px] font-semibold text-white">
+            {annualSavingsLabel}
+          </span>
+        </button>
+      </div>
+
+      {/* Hint de conversión: solo cuando el usuario está en mensual */}
+      {cycle === 'monthly' && (
+        <p className="text-xs font-medium text-green-600" role="status" aria-live="polite">
+          Ahorra {annualSavingsLabel} cambiando a anual
+        </p>
       )}
-    </td>
-  );
-}
-
-// ── Tabla desktop ────────────────────────────────────────────────────────────
-
-function DesktopTable() {
-  return (
-    <div className="hidden md:block overflow-x-auto rounded-radius-2xl border border-neutral-200 shadow-card">
-      <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr className="border-b border-neutral-200">
-            {/* Columna vacía (etiqueta de feature) */}
-            <th className="w-[260px] px-6 py-5 text-left bg-neutral-50" scope="col">
-              <span className="sr-only">Feature</span>
-            </th>
-
-            {PRICING_PLANS.map((plan) => (
-              <th
-                key={plan.id}
-                scope="col"
-                className={cn(
-                  'px-4 py-5 text-center align-top',
-                  plan.highlighted ? 'bg-blue-50' : 'bg-white',
-                )}
-              >
-                <div className="flex flex-col items-center gap-2">
-                  {plan.badge && (
-                    <span className="inline-block rounded-full bg-blue-600 px-3 py-0.5 text-[11px] font-semibold text-white">
-                      {plan.badge}
-                    </span>
-                  )}
-                  <span
-                    className={cn(
-                      'font-bold text-base',
-                      plan.highlighted ? 'text-blue-700' : 'text-neutral-900',
-                    )}
-                  >
-                    {plan.name}
-                  </span>
-                  <span
-                    className={cn(
-                      'font-semibold text-xl',
-                      plan.highlighted ? 'text-blue-600' : 'text-neutral-900',
-                    )}
-                  >
-                    {plan.price}
-                  </span>
-                  <span className="text-xs text-neutral-400">{plan.priceNote}</span>
-                  <p className="text-xs text-neutral-500 text-balance leading-snug mt-1">
-                    {plan.description}
-                  </p>
-                  <Button
-                    variant={plan.highlighted ? 'primary' : 'secondary'}
-                    size="sm"
-                    asChild
-                    className="mt-1 rounded-full w-full"
-                  >
-                    <Link
-                      href={plan.ctaHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {plan.cta}
-                    </Link>
-                  </Button>
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-
-        <tbody>
-          {TABLE_CATEGORIES.map((category) => (
-            <React.Fragment key={category.title}>
-              {/* Fila de categoría */}
-              <tr className="border-t border-neutral-100">
-                <td
-                  colSpan={PRICING_PLANS.length + 1}
-                  className="px-6 py-3 bg-neutral-50"
-                >
-                  <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-                    {category.title}
-                  </span>
-                </td>
-              </tr>
-
-              {/* Filas de features */}
-              {category.features.map((feature) => (
-                <tr
-                  key={feature.matchKey}
-                  className="border-t border-neutral-100 hover:bg-neutral-50/60 transition-colors"
-                >
-                  <td className="px-6 py-3.5 text-sm text-neutral-700 bg-white">
-                    {feature.label}
-                  </td>
-                  {PRICING_PLANS.map((plan) => (
-                    <FeatureCell
-                      key={plan.id}
-                      planId={plan.id}
-                      matchKey={feature.matchKey}
-                      highlighted={!!plan.highlighted}
-                    />
-                  ))}
-                </tr>
-              ))}
-            </React.Fragment>
-          ))}
-        </tbody>
-
-        {/* Fila de CTAs al pie */}
-        <tfoot>
-          <tr className="border-t border-neutral-200">
-            <td className="px-6 py-5 bg-neutral-50" />
-            {PRICING_PLANS.map((plan) => (
-              <td
-                key={plan.id}
-                className={cn(
-                  'px-4 py-5 text-center',
-                  plan.highlighted ? 'bg-blue-50' : 'bg-white',
-                )}
-              >
-                <Button
-                  variant={plan.highlighted ? 'primary' : 'secondary'}
-                  size="sm"
-                  asChild
-                  className="rounded-full w-full"
-                >
-                  <Link
-                    href={plan.ctaHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {plan.cta}
-                  </Link>
-                </Button>
-              </td>
-            ))}
-          </tr>
-        </tfoot>
-      </table>
     </div>
   );
 }
 
-// ── Cards mobile ─────────────────────────────────────────────────────────────
-// En mobile la tabla colapsa a cards apiladas por plan.
+// ── Card individual ──────────────────────────────────────────────────────────
 
-function MobileCard({ plan }: { plan: (typeof PRICING_PLANS)[number] }) {
+interface PlanCardProps {
+  plan: PricingPlanHeader;
+  cycle: BillingCycle;
+}
+
+function PlanCard({ plan, cycle }: PlanCardProps) {
+  const { price, note } = getDisplayPrice(plan, cycle);
+  const showSavingsBadge =
+    plan.isRecurring && cycle === 'annual' && Boolean(plan.annualSavings);
+
   return (
     <article
-      className={cn(
-        'rounded-radius-2xl border overflow-hidden',
-        plan.highlighted
-          ? 'border-blue-300 shadow-[0_0_0_2px_theme(colors.blue.600/0.15)]'
-          : 'border-neutral-200',
-      )}
       aria-label={`Plan ${plan.name}`}
+      className={cn(
+        'relative flex flex-col rounded-2xl border overflow-hidden',
+        'transition-shadow duration-200 hover:shadow-md',
+        plan.highlighted
+          ? 'bg-neutral-900 border-neutral-800 shadow-lg'
+          : 'bg-white border-neutral-200 shadow-sm',
+      )}
     >
-      {/* Cabecera del plan */}
-      <div
-        className={cn(
-          'px-5 py-6',
-          plan.highlighted ? 'bg-blue-600 text-white' : 'bg-neutral-50',
-        )}
-      >
-        {plan.badge && (
+      {/* Badge superior */}
+      {plan.badge && (
+        <div className="px-5 pt-5 pb-0">
           <span
             className={cn(
-              'inline-block rounded-full px-3 py-0.5 text-[11px] font-semibold mb-2',
+              'inline-block rounded-full px-3 py-0.5 text-[11px] font-semibold',
               plan.highlighted
-                ? 'bg-white/20 text-white'
-                : 'bg-blue-600 text-white',
+                ? 'bg-blue-500 text-white'
+                : 'bg-blue-100 text-blue-700',
             )}
           >
             {plan.badge}
           </span>
-        )}
+        </div>
+      )}
+
+      {/* Nombre y descripción */}
+      <div className={cn('px-5', plan.badge ? 'pt-3' : 'pt-5')}>
         <h3
           className={cn(
-            'font-bold text-lg',
+            'font-bold text-lg leading-tight',
             plan.highlighted ? 'text-white' : 'text-neutral-900',
           )}
         >
@@ -341,118 +152,124 @@ function MobileCard({ plan }: { plan: (typeof PRICING_PLANS)[number] }) {
         </h3>
         <p
           className={cn(
-            'font-semibold text-2xl mt-1',
-            plan.highlighted ? 'text-white' : 'text-neutral-900',
-          )}
-        >
-          {plan.price}
-        </p>
-        <p
-          className={cn(
-            'text-xs mt-0.5',
-            plan.highlighted ? 'text-blue-100' : 'text-neutral-400',
-          )}
-        >
-          {plan.priceNote}
-        </p>
-        <p
-          className={cn(
-            'text-sm mt-3 leading-relaxed',
-            plan.highlighted ? 'text-blue-100' : 'text-neutral-500',
+            'mt-1.5 text-sm leading-relaxed',
+            plan.highlighted ? 'text-neutral-300' : 'text-neutral-500',
           )}
         >
           {plan.description}
         </p>
+      </div>
+
+      {/* Divider */}
+      <div
+        className={cn(
+          'mx-5 my-4 border-t',
+          plan.highlighted ? 'border-neutral-700' : 'border-neutral-100',
+        )}
+        aria-hidden="true"
+      />
+
+      {/* Precio */}
+      <div className="px-5">
+        <div className="flex items-end gap-2">
+          <span
+            className={cn(
+              'text-3xl font-bold leading-none',
+              plan.highlighted ? 'text-white' : 'text-neutral-900',
+            )}
+          >
+            {price}
+          </span>
+          {showSavingsBadge && plan.annualSavings && (
+            <span className="mb-0.5 rounded-full bg-green-500 px-2 py-0.5 text-[10px] font-semibold text-white">
+              {plan.annualSavings}
+            </span>
+          )}
+        </div>
+        <p
+          className={cn(
+            'mt-1 text-xs',
+            plan.highlighted ? 'text-neutral-300' : 'text-neutral-400',
+          )}
+        >
+          {note}
+        </p>
+      </div>
+
+      {/* Features */}
+      {plan.features && plan.features.length > 0 && (
+        <>
+          <div
+            className={cn(
+              'mx-5 my-4 border-t',
+              plan.highlighted ? 'border-neutral-700' : 'border-neutral-100',
+            )}
+            aria-hidden="true"
+          />
+          <div className="px-5 pb-2">
+            <ul className="flex flex-col gap-2" role="list">
+              {plan.features.map((feature) => (
+                <li key={feature} className="flex items-start gap-2.5 text-sm">
+                  <Check
+                    className={cn('size-4 shrink-0 mt-0.5', plan.highlighted ? 'text-blue-400' : 'text-blue-600')}
+                    aria-hidden="true"
+                    strokeWidth={2.5}
+                  />
+                  <span className={cn('leading-snug', plan.highlighted ? 'text-neutral-100' : 'text-neutral-700')}>
+                    {feature}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </>
+      )}
+
+      {/* CTA siempre al pie — flex-1 empuja el botón hacia abajo */}
+      <div className="flex-1" />
+      <div className="px-5 pb-6 pt-5">
         <Button
-          variant={plan.highlighted ? 'secondary' : 'primary'}
+          variant={plan.highlighted ? 'primary' : 'secondary'}
           size="md"
           asChild
-          className="mt-5 w-full rounded-full justify-center"
+          className="w-full rounded-full justify-center"
         >
-          <Link
-            href={plan.ctaHref}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <Link href={plan.ctaHref} target="_blank" rel="noopener noreferrer">
             {plan.cta}
           </Link>
         </Button>
       </div>
-
-      {/* Features agrupadas por categoría */}
-      <div className="px-5 py-4 bg-white divide-y divide-neutral-100">
-        {TABLE_CATEGORIES.map((category) => (
-          <div key={category.title} className="py-3 first:pt-0 last:pb-0">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-2">
-              {category.title}
-            </p>
-            <ul className="flex flex-col gap-1.5">
-              {category.features.map((feature) => {
-                const value = resolveFeatureValue(plan.id, feature.matchKey);
-                const included = value?.included ?? false;
-                return (
-                  <li
-                    key={feature.matchKey}
-                    className="flex items-start gap-2.5 text-sm"
-                  >
-                    {included ? (
-                      <Check
-                        className="size-4 shrink-0 text-blue-600 mt-0.5"
-                        aria-hidden="true"
-                        strokeWidth={2.5}
-                      />
-                    ) : (
-                      <X
-                        className="size-4 shrink-0 text-neutral-300 mt-0.5"
-                        aria-hidden="true"
-                        strokeWidth={2}
-                      />
-                    )}
-                    <span
-                      className={cn(
-                        'leading-snug',
-                        included ? 'text-neutral-700' : 'text-neutral-400',
-                      )}
-                    >
-                      {feature.label}
-                      {value?.note && (
-                        <span className="ml-1 text-neutral-400 text-xs">
-                          ({value.note})
-                        </span>
-                      )}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
-      </div>
     </article>
-  );
-}
-
-function MobileCards() {
-  return (
-    <div className="md:hidden flex flex-col gap-6">
-      {PRICING_PLANS.map((plan) => (
-        <MobileCard key={plan.id} plan={plan} />
-      ))}
-    </div>
   );
 }
 
 // ── Export principal ─────────────────────────────────────────────────────────
 
 export function PlanesTable() {
+  const [cycle, setCycle] = useState<BillingCycle>('monthly');
+
+  // Toma el annualSavings del primer plan recurrente que lo tenga
+  const savingsLabel =
+    PRICING_PLANS.find((p) => p.isRecurring && p.annualSavings)?.annualSavings ??
+    '2 meses gratis';
+
   return (
     <section
-      aria-label="Tabla comparativa de planes"
-      className="w-full bg-white px-4 py-8 md:py-12"
+      aria-label="Comparativa de planes"
+      className="w-full px-4 py-8 md:py-12"
     >
       <div className="mx-auto max-w-6xl">
-        <DesktopTable />
-        <MobileCards />
+        <BillingToggle
+          cycle={cycle}
+          onChange={setCycle}
+          annualSavingsLabel={savingsLabel}
+        />
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {PRICING_PLANS.map((plan) => (
+            <PlanCard key={plan.id} plan={plan} cycle={cycle} />
+          ))}
+        </div>
       </div>
     </section>
   );

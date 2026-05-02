@@ -5,10 +5,10 @@ export function PlanesHero() {
   return (
     <section
       aria-label="Encabezado de planes"
-      className="w-full bg-white px-4 pt-20 pb-16 md:pt-28 md:pb-20"
+      className="w-full bg-white px-4 pt-10 pb-16 md:pt-16 md:pb-20"
     >
       <div className="mx-auto max-w-3xl flex flex-col items-center gap-6 text-center">
-        <SectionLabel>Planes y precios</SectionLabel>
+        <SectionLabel>Encuentra el plan ideal para digitalizar y hacer crecer tu negocio</SectionLabel>
 
         <h1
           className="font-bold tracking-tight text-neutral-900 text-balance"
